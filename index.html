@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tra Cứu Từ Điển</title>
+    <style>
+      /* Basic styles for popup */
+      #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 100;
+      }
+      #popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        display: none;
+        z-index: 101;
+        max-width: 300px;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+      .word-info {
+        margin-bottom: 10px;
+      }
+      .word-info strong {
+        display: block;
+      }
+      #searchButton {
+        display: none;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <p id="text">
+      私たちが暮らす社会には、数多くの職種があります。町を歩けば様々な商店や会社が目に入り、身の回りにある物の製造・販売に携わる業種を想像するだけでも、そのことが感じられるでしょう。
+    </p>
+
+    <!-- Hidden overlay and popup -->
+    <div id="overlay"></div>
+    <div id="popup">
+      <div id="wordsContainer"></div>
+    </div>
+
+    <!-- Search button -->
+    <button id="searchButton">Tìm kiếm</button>
+
+    <script src="https://unpkg.com/kuroshiro@1.2.0/dist/kuroshiro.min.js"></script>
+    <script src="https://unpkg.com/kuroshiro-analyzer-kuromoji@1.1.0/dist/kuroshiro-analyzer-kuromoji.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async function () {
+        const kuroshiro = Kuroshiro.default
+          ? new Kuroshiro.default()
+          : new Kuroshiro();
+
+        // Chỉ định đường dẫn đến các tệp từ điển
+        await kuroshiro.init(
+          new KuromojiAnalyzer({
+            dictPath: "./dict/", // Đường dẫn đến thư mục chứa các tệp từ điển
+          })
+        );
+
+        const textElement = document.getElementById("text");
+        const originalText = textElement.innerText;
+
+        const result = await kuroshiro.convert(originalText, {
+          mode: "furigana",
+          to: "hiragana",
+        });
+        textElement.innerHTML = result;
+      });
+    </script>
+  </body>
+</html>
